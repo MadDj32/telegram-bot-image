@@ -1,21 +1,26 @@
+import os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackContext
 
-# Замените 'ваш_токен' на действительный токен
-TOKEN = '7225397168:AAHwFOFmbptPq9jHbHl3VzJhdwFv86IZPig'
+# Получаем токен из переменных среды
+TOKEN = os.getenv('TOKEN')
 
-# Путь к вашему изображению
-IMAGE_PATH = 'C:/Users/Bot/111.png'
+# Путь к вашему изображению относительно корня проекта
+IMAGE_PATH = '111.png'
 
 async def start(update: Update, context: CallbackContext) -> None:
     # Отправляем изображение
-    await update.message.reply_photo(photo=open(IMAGE_PATH, 'rb'))
+    with open(IMAGE_PATH, 'rb') as photo:
+        await update.message.reply_photo(photo=photo)
 
 def main():
+    # Создаем объект приложения с токеном из переменных среды
     application = Application.builder().token(TOKEN).build()
 
+    # Добавляем обработчик команды /start
     application.add_handler(CommandHandler("start", start))
 
+    # Запускаем бота
     application.run_polling()
 
 if __name__ == '__main__':
